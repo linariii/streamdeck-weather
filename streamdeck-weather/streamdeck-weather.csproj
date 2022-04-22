@@ -84,6 +84,19 @@
   <ItemGroup>
     <Compile Include="Actions\GlobalSettings.cs" />
     <Compile Include="Actions\Weather.cs" />
+    <Compile Include="Backend\Models\Astro.cs" />
+    <Compile Include="Backend\Models\Astronomy.cs" />
+    <Compile Include="Backend\Models\AstronomyResult.cs" />
+    <Compile Include="Backend\Models\Condition.cs" />
+    <Compile Include="Backend\Models\Current.cs" />
+    <Compile Include="Backend\Models\Day.cs" />
+    <Compile Include="Backend\Models\Forecast.cs" />
+    <Compile Include="Backend\Models\ForeCastDay.cs" />
+    <Compile Include="Backend\Models\ForeCastResult.cs" />
+    <Compile Include="Backend\Models\Hour.cs" />
+    <Compile Include="Backend\Models\Location.cs" />
+    <Compile Include="Backend\WeatherApiClient.cs" />
+    <Compile Include="Backend\Models\CurrentWeatherResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -130,9 +143,7 @@
       <Version>5.0.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Backend\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>

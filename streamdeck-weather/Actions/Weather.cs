@@ -3,37 +3,46 @@ using System.Threading.Tasks;
 using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Weather.Backend.Models;
 
 namespace Weather.Actions
 {
     [PluginActionId("com.linariii.weather")]
     public class Weather : PluginBase
     {
-        private class PluginSettings
-        {
-            public static PluginSettings CreateDefaultSettings()
-            {
-                return new PluginSettings { };
-            }
-        }
-
-        #region Private Members
-
+        private const int FetchCooldownSec = 300; // 5 min
         private PluginSettings _settings;
         private GlobalSettings _globalSettings;
 
-        #endregion
+        private class PluginSettings
+        {
+            public string CityName { get; set; }
+            public CurrentWeatherResult Data { get; set; }
+            public DateTime LastRefresh { get; set; }
+            public static PluginSettings CreateDefaultSettings()
+            {
+                return new PluginSettings
+                {
+                    LastRefresh = DateTime.MinValue
+                };
+            }
+        }
+
         public Weather(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 _settings = PluginSettings.CreateDefaultSettings();
-                SaveSettings();
+                _globalSettings = GlobalSettings.CreateDefaultSettings();
             }
             else
             {
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
                 _settings = payload.Settings.ToObject<PluginSettings>();
+                if(_settings != null)
+                    _settings.LastRefresh = DateTime.MinValue;
             }
+            GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
 
         public override void Dispose()
@@ -50,21 +59,46 @@ namespace Weather.Actions
 
         public override void OnTick() { }
 
-        public override void ReceivedSettings(ReceivedSettingsPayload payload)
+        public override async void ReceivedSettings(ReceivedSettingsPayload payload)
         {
             Tools.AutoPopulateSettings(_settings, payload.Settings);
-            SaveSettings();
+            await SaveSettings();
         }
 
-        public override void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload) { }
-
-        #region Private Methods
-
-        private Task SaveSettings()
+        public override async void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
         {
-            return Connection.SetSettingsAsync(JObject.FromObject(_settings));
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedGlobalSettings");
+            if (payload.Settings != null && payload.Settings.Count > 0)
+            {
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedGlobalSettings: {payload.Settings}");
+                var settings = payload.Settings.ToObject<GlobalSettings>();
+                if (settings != null && _globalSettings != null)
+                {
+                    var updated = false;
+                    if (settings.ApiKey != _globalSettings.ApiKey)
+                    {
+                        _globalSettings.ApiKey = settings.ApiKey;
+                        updated = true;
+                    }
+
+                    await SaveGlobalSettings(updated);
+                }
+            }
         }
 
-        #endregion
+        private async Task SaveSettings()
+        {
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveSettings: {JObject.FromObject(_settings)}");
+            await Connection.SetSettingsAsync(JObject.FromObject(_settings));
+        }
+
+        private async Task SaveGlobalSettings(bool triggerDidReceiveGlobalSettings = true)
+        {
+            if (_globalSettings != null)
+            {
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveGlobalSettings: {JObject.FromObject(_globalSettings)}");
+                await Connection.SetGlobalSettingsAsync(JObject.FromObject(_globalSettings), triggerDidReceiveGlobalSettings);
+            }
+        }
     }
 }
