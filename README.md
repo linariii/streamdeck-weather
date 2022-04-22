@@ -6,9 +6,9 @@
 - display current weather for one location [^1]
   - once setup the button automatically updates without any interaction necessary
 - display detail weather (wind, humidity, feelslike, ...) [^2]
- - change the displayed information after a few seconds or on button click
+  - change the displayed information after a few seconds or on button click
 - display weather for multiple locations [^2]
- - change the displayed weather/city after a few seconds or on button click
+  - change the displayed weather/city after a few seconds or on button click
 
 ## Support
  - Supports Windows: Yes
