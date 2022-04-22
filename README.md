@@ -9,7 +9,7 @@
   - change the displayed information after a few seconds or on button click
 - display weather for multiple locations [^2]
   - change the displayed weather/city after a few seconds or on button click
-- display weather forcast [^2]
+- display weather forecast [^2]
 - display astronomy (sunrise, sunset, moonrise, moonset, moon phase and illumination) [^2]
 
 ## Support
