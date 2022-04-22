@@ -1,5 +1,7 @@
 # Weather plugin for Elgato Stream Deck
 
+[![CI](https://github.com/linariii/streamdeck-weather/actions/workflows/CI.yml/badge.svg)](https://github.com/linariii/streamdeck-weather/actions/workflows/CI.yml) [![CD](https://github.com/linariii/streamdeck-weather/actions/workflows/CD.yml/badge.svg)](https://github.com/linariii/streamdeck-weather/actions/workflows/CD.yml)
+
 ## Support
  - Supports Windows: Yes
  - Supports Mac: No
