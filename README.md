@@ -9,6 +9,7 @@
   - change the displayed information after a few seconds or on button click
 - display weather for multiple locations [^2]
   - change the displayed weather/city after a few seconds or on button click
+- display weather forcast [^2]
 
 ## Support
  - Supports Windows: Yes
