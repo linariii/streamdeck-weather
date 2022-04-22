@@ -1,0 +1,51 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3  
+      
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.6
+      
+    - name: Restore Nuget packages
+      run: nuget restore streamdeck-weather/streamdeck-weather.sln
+    
+    - name: Build the Solution
+      run: msbuild streamdeck-weather/streamdeck-weather.sln /p:Configuration=Release
+      
+    - name: Create plugin with destributiontool
+      run: ${{ github.workspace }}\\streamdeck-weather\Distribution\DistributionTool.exe -b -i ${{ github.workspace }}\\streamdeck-weather\bin\Release\com.linariii.weatheria.sdPlugin -o ${{ github.workspace }}
+      shell: cmd
+      
+    - name: release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:  
+        draft: false
+        prerelease: false
+        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref }}
+      
+    - name: upload windows artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./com.linariii.weatheria.streamDeckPlugin
+        asset_name: com.linariii.weatheria.streamDeckPlugin
+        asset_content_type: application/zip
+    
