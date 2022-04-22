@@ -2,7 +2,7 @@
 
 namespace Weather.Backend.Models
 {
-    public class ForeCastResult
+    public class ForecastResult
     {
         [JsonProperty("location")]
         public Location Location { get; set; }

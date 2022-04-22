@@ -6,6 +6,6 @@ namespace Weather.Backend.Models
     public class Forecast
     {
         [JsonProperty("forecastday")]
-        public List<ForeCastDay> Forecastday { get; set; }
+        public List<ForecastDay> Forecastday { get; set; }
     }
 }

@@ -82,8 +82,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\Astronomy.cs" />
+    <Compile Include="Actions\WeatherForecast.cs" />
+    <Compile Include="Actions\MultiWeather.cs" />
     <Compile Include="Actions\GlobalSettings.cs" />
-    <Compile Include="Actions\Weather.cs" />
+    <Compile Include="Actions\CurrentWeather.cs" />
     <Compile Include="Backend\Models\Astro.cs" />
     <Compile Include="Backend\Models\Astronomy.cs" />
     <Compile Include="Backend\Models\AstronomyResult.cs" />
@@ -91,8 +94,8 @@
     <Compile Include="Backend\Models\Current.cs" />
     <Compile Include="Backend\Models\Day.cs" />
     <Compile Include="Backend\Models\Forecast.cs" />
-    <Compile Include="Backend\Models\ForeCastDay.cs" />
-    <Compile Include="Backend\Models\ForeCastResult.cs" />
+    <Compile Include="Backend\Models\ForecastDay.cs" />
+    <Compile Include="Backend\Models\ForecastResult.cs" />
     <Compile Include="Backend\Models\Hour.cs" />
     <Compile Include="Backend\Models\Location.cs" />
     <Compile Include="Backend\WeatherApiClient.cs" />

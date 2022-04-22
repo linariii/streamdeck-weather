@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Weather.Backend.Models;
 
 namespace Weather.Actions
 {
-    [PluginActionId("com.linariii.weather")]
-    public class Weather : PluginBase
+    [PluginActionId("com.linariii.weather.forecast")]
+    public class WeatherForecast : PluginBase
     {
         private const int FetchCooldownSec = 300; // 5 min
         private PluginSettings _settings;
@@ -28,7 +27,7 @@ namespace Weather.Actions
             }
         }
 
-        public Weather(SDConnection connection, InitialPayload payload) : base(connection, payload)
+        public WeatherForecast(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
             {

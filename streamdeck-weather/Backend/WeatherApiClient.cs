@@ -29,7 +29,7 @@ namespace Weather.Backend
                 : JsonConvert.DeserializeObject<AstronomyResult>(result);
         }
 
-        public static async Task<ForeCastResult> GetForeCastData(string apiKey, string cityName, int days = 3)
+        public static async Task<ForecastResult> GetForeCastData(string apiKey, string cityName, int days = 3)
         {
             if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(cityName))
                 return null;
@@ -37,7 +37,7 @@ namespace Weather.Backend
             var result = await DownloadString($"{BaseUrl}/forecast.json?key={apiKey}&q={cityName}&aqi=no&days={days}");
             return string.IsNullOrWhiteSpace(result)
                 ? null
-                : JsonConvert.DeserializeObject<ForeCastResult>(result);
+                : JsonConvert.DeserializeObject<ForecastResult>(result);
         }
 
         private static async Task<string> DownloadString(string url)

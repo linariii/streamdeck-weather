@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Weather.Backend.Models
 {
-    public class ForeCastDay
+    public class ForecastDay
     {
         [JsonProperty("date")]
         public string Date { get; set; }
