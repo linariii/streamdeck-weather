@@ -20,7 +20,7 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.6
       
     - name: Restore Nuget packages
-      run: nuget restore streamdeck-weather.sln
+      run: nuget restore streamdeck-weather/streamdeck-weather.sln
     
     - name: Build the Solution
-      run: msbuild streamdeck-weather.sln /p:Configuration=Release
+      run: msbuild streamdeck-weather/streamdeck-weather.sln /p:Configuration=Release
