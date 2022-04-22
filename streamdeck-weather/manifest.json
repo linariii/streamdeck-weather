@@ -1,0 +1,38 @@
+{
+  "Actions": [
+    {
+      "Icon": "Images/weather",
+      "Name": "TODO_ENTER_NAME_OF_ACTION",
+      "States": [
+        {
+          "Image": "Images/weather-key",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "TODO_ENTER_TOOLTIP",
+      "UUID": "com.linariii.weather",
+      "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
+    }
+  ],
+  "Author": "linariii",
+  "Name": "Weatheria",
+  "Description": "Displays the weather of the selected city",
+  "Icon": "Images/pluginIcon",
+  "URL": "https://github.com/linariii/streamdeck-weather",
+  "Version": "1.0",
+  "CodePath": "weather",
+  "Category": "Weatheria",
+  "CategoryIcon": "Images/sun",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "4.9"
+  }
+}
