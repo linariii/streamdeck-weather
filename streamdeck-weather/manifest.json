@@ -5,67 +5,19 @@
       "Name": "Current weather",
       "States": [
         {
-          "Image": "Images/weather-key",
-          "TitleAlignment": "middle",
-          "FontSize": "12"
+          "Image": "Images/weather-key"
         }
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "Displays the current weather of the selected city",
       "UUID": "com.linariii.weather.current",
       "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
-    },
-    {
-      "Icon": "Images/weather",
-      "Name": "Weather forecast",
-      "States": [
-        {
-          "Image": "Images/weather-key",
-          "TitleAlignment": "middle",
-          "FontSize": "12"
-        }
-      ],
-      "SupportedInMultiActions": false,
-      "Tooltip": "Displays the weather forecast of the selected city",
-      "UUID": "com.linariii.weather.forecast",
-      "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
-    },
-    {
-      "Icon": "Images/weather",
-      "Name": "Astronomy",
-      "States": [
-        {
-          "Image": "Images/weather-key",
-          "TitleAlignment": "middle",
-          "FontSize": "12"
-        }
-      ],
-      "SupportedInMultiActions": false,
-      "Tooltip": "Displays astronomy information for the selected city",
-      "UUID": "com.linariii.weather.astronomy",
-      "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
-    },
-    {
-      "Icon": "Images/weather",
-      "Name": "Weather multi",
-      "States": [
-        {
-          "Image": "Images/weather-key",
-          "TitleAlignment": "middle",
-          "FontSize": "12"
-        }
-      ],
-      "SupportedInMultiActions": false,
-      "Tooltip": "Displays the weather for up to three selected cities",
-      "UUID": "com.linariii.weather.multi",
-      "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
     }
-
   ],
   "Author": "linariii",
   "Name": "Weatheria",
   "Description": "Displays the weather of the selected city",
-  "Icon": "Images/pluginIcon",
+  "Icon": "Images/weather-key",
   "URL": "https://github.com/linariii/streamdeck-weather",
   "Version": "1.0",
   "CodePath": "weather",

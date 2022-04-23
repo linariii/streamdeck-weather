@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Weather.Backend.Models;
 
@@ -38,6 +39,19 @@ namespace Weather.Backend
             return string.IsNullOrWhiteSpace(result)
                 ? null
                 : JsonConvert.DeserializeObject<ForecastResult>(result);
+        }
+
+        public static async Task<List<CurrentWeatherResult>> GetCurrentWeatherData(string apiKey, params string[] cityNames)
+        {
+            var results = new List<CurrentWeatherResult>();
+            foreach (var cityName in cityNames)
+            {
+                var result = await GetCurrentWeatherData(apiKey, cityName);
+                if (result != null)
+                    results.Add(result);
+            }
+
+            return results;
         }
 
         private static async Task<string> DownloadString(string url)
