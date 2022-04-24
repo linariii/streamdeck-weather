@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Net;
+using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
 using Newtonsoft.Json;
@@ -100,8 +101,8 @@ namespace Weather.Actions
                     {
                         _settings.Data = data;
                         _settings.LastRefresh = DateTime.Now;
-                        await Draw();
                         await SaveSettings();
+                        await Draw();
                     }
                 }
                 catch (Exception ex)
@@ -114,6 +115,7 @@ namespace Weather.Actions
 
         private async Task Draw()
         {
+            Logger.Instance.LogMessage(TracingLevel.DEBUG, GetIconPath());
             try
             {
                 using (Bitmap bmp = Tools.GenerateGenericKeyImage(out Graphics graphics))
@@ -126,29 +128,27 @@ namespace Weather.Actions
 
                     var fgBrush = new SolidBrush(Color.White);
                     var stringWidth = graphics.GetTextCenter(_settings.City, width, fontDefault);
-
                     var showTitle = !string.IsNullOrWhiteSpace(_settings.DisplayName) && _settings.DisplayName == "1";
+
                     // Top title
                     if (showTitle)
                     {
-                        var fontSizeDefault = graphics.GetFontSizeWhereTextFitsImage(_settings.City, width, fontDefault, 8);
+                        var title = !string.IsNullOrWhiteSpace(_settings.Data.Location?.Name)
+                            ? _settings.Data.Location?.Name
+                            : _settings.City;
+
+                        var fontSizeDefault = graphics.GetFontSizeWhereTextFitsImage(title, width, fontDefault, 8);
                         fontDefault = new Font(fontDefault.Name, fontSizeDefault, fontDefault.Style, GraphicsUnit.Pixel);
                         graphics.DrawAndMeasureString(_settings.City, fontDefault, fgBrush, new PointF(stringWidth, 5));
                     }
 
                     // Background
-                    var url = $"https:{_settings.Data.Current.Condition.Icon}";
-                    var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                    var httpWebResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync();
-                    var stream = httpWebResponse.GetResponseStream();
-                    if (stream != null)
+                    var iconPath = GetIconPath();
+                    if (!string.IsNullOrWhiteSpace(iconPath) && File.Exists(iconPath))
                     {
-                        var backgroundImagePos = showTitle ? 15 : 0;
-                        var backgroundImage = Image.FromStream(stream);
-                        graphics.DrawImage(backgroundImage, 12, backgroundImagePos, 120, 120);
-                        stream.Dispose();
-                        backgroundImage.Dispose();
-                        httpWebResponse.Dispose();
+                        var backgroundImagePos = showTitle ? 20 : 5;
+                        var backgroundImage = Image.FromFile(iconPath);
+                        graphics.DrawImage(backgroundImage, 27, backgroundImagePos, 90, 90);
                     }
 
                     //temp
@@ -159,7 +159,7 @@ namespace Weather.Actions
                     var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(currStr, width, fontCurrency, 20);
                     fontCurrency = new Font(fontCurrency.Name, fontSizeTemp, fontCurrency.Style, GraphicsUnit.Pixel);
                     stringWidth = graphics.GetTextCenter(currStr, width, fontCurrency);
-                    var tempPos = showTitle ? 111 : 100;
+                    var tempPos = showTitle ? 111 : 105;
                     graphics.DrawAndMeasureString(currStr, fontCurrency, fgBrush, new PointF(stringWidth, tempPos));
 
                     await Connection.SetImageAsync(bmp);
@@ -207,6 +207,23 @@ namespace Weather.Actions
                     await SaveGlobalSettings(updated);
                 }
             }
+        }
+
+        private string GetIconPath()
+        {
+            if (string.IsNullOrWhiteSpace(_settings?.Data?.Current?.Condition?.Icon))
+                return null;
+
+            var assemblyLocation = Assembly.GetEntryAssembly()?.Location;
+            if (string.IsNullOrWhiteSpace(assemblyLocation))
+                return null;
+
+            var currentPath = Path.GetDirectoryName(assemblyLocation);
+
+            var index = _settings.Data.Current.Condition.Icon.IndexOf("/weather/", StringComparison.Ordinal);
+            var iconSubPath = _settings.Data.Current.Condition.Icon.Substring(index).Replace("/", "\\");
+
+            return $"{currentPath}{Path.DirectorySeparatorChar}Images{iconSubPath}";
         }
 
         private async Task SaveSettings()
