@@ -149,6 +149,7 @@ namespace Weather.Actions
                         var backgroundImagePos = showTitle ? 20 : 5;
                         var backgroundImage = Image.FromFile(iconPath);
                         graphics.DrawImage(backgroundImage, 27, backgroundImagePos, 90, 90);
+                        backgroundImage.Dispose();
                     }
 
                     //temp
