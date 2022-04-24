@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Weather.Backend.Models;
@@ -56,7 +57,7 @@ namespace Weather.Backend
 
         private static async Task<string> DownloadString(string url)
         {
-            using (var client = new System.Net.WebClient())
+            using (var client = new System.Net.WebClient { Encoding = Encoding.UTF8 })
             {
                 return await client.DownloadStringTaskAsync(url);
             }
