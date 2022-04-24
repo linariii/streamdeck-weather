@@ -133,7 +133,7 @@ namespace Weather.Actions
                     {
                         var fontSizeDefault = graphics.GetFontSizeWhereTextFitsImage(_settings.City, width, fontDefault, 8);
                         fontDefault = new Font(fontDefault.Name, fontSizeDefault, fontDefault.Style, GraphicsUnit.Pixel);
-                        graphics.DrawAndMeasureString(_settings.City, fontDefault, fgBrush, new PointF(stringWidth, 10));
+                        graphics.DrawAndMeasureString(_settings.City, fontDefault, fgBrush, new PointF(stringWidth, 5));
                     }
 
                     // Background
@@ -143,9 +143,9 @@ namespace Weather.Actions
                     var stream = httpWebResponse.GetResponseStream();
                     if (stream != null)
                     {
-                        var backgroundImagePos = showTitle ? 8 : -22;
+                        var backgroundImagePos = showTitle ? 15 : 0;
                         var backgroundImage = Image.FromStream(stream);
-                        graphics.DrawImage(backgroundImage, 8, backgroundImagePos, 128, 128);
+                        graphics.DrawImage(backgroundImage, 12, backgroundImagePos, 120, 120);
                         stream.Dispose();
                         backgroundImage.Dispose();
                         httpWebResponse.Dispose();
@@ -159,7 +159,7 @@ namespace Weather.Actions
                     var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(currStr, width, fontCurrency, 20);
                     fontCurrency = new Font(fontCurrency.Name, fontSizeTemp, fontCurrency.Style, GraphicsUnit.Pixel);
                     stringWidth = graphics.GetTextCenter(currStr, width, fontCurrency);
-                    var tempPos = showTitle ? 104 : 90;
+                    var tempPos = showTitle ? 111 : 100;
                     graphics.DrawAndMeasureString(currStr, fontCurrency, fgBrush, new PointF(stringWidth, tempPos));
 
                     await Connection.SetImageAsync(bmp);
