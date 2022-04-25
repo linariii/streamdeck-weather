@@ -12,6 +12,19 @@
       "Tooltip": "Displays the current weather of the selected city",
       "UUID": "com.linariii.weather.current",
       "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
+    },
+    {
+      "Icon": "Images/weather-multi",
+      "Name": "Multi weather",
+      "States": [
+        {
+          "Image": "Images/weather-key"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Displays the current weather for multiple cities",
+      "UUID": "com.linariii.multi.weather",
+      "PropertyInspectorPath": "PropertyInspector/Weather/WeatherMulti.html"
     }
   ],
   "Author": "linariii",
