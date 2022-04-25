@@ -61,7 +61,7 @@ namespace Weather.Actions
 
         public override void KeyReleased(KeyPayload payload) { }
 
-        private protected string GetConditionIconPath(CurrentWeatherResult data)
+        private protected string GetConditonIconPath(CurrentWeatherResult data)
         {
             if (string.IsNullOrWhiteSpace(data?.Current?.Condition?.Icon))
                 return null;
@@ -93,41 +93,42 @@ namespace Weather.Actions
                     var height = bmp.Height;
                     var width = bmp.Width;
 
-                    var fontDefault = new Font("Verdana", 20, FontStyle.Bold, GraphicsUnit.Pixel);
-                    var fontCurrency = new Font("Verdana", 28, FontStyle.Bold, GraphicsUnit.Pixel);
-
                     var fgBrush = new SolidBrush(Color.White);
                     float stringWidth;
 
                     // Top title
                     if (showTitle)
                     {
-                        stringWidth = graphics.GetTextCenter(title, width, fontDefault);
-                        var fontSizeDefault = graphics.GetFontSizeWhereTextFitsImage(title, width, fontDefault, 8);
-                        fontDefault = new Font(fontDefault.Name, fontSizeDefault, fontDefault.Style, GraphicsUnit.Pixel);
-                        graphics.DrawAndMeasureString(title, fontDefault, fgBrush, new PointF(stringWidth, 5));
+                        var fontTitle = new Font("Verdana", 20, FontStyle.Bold, GraphicsUnit.Pixel);
+                        stringWidth = graphics.GetTextCenter(title, width, fontTitle);
+                        var fontSizeDefault = graphics.GetFontSizeWhereTextFitsImage(title, width, fontTitle, 8);
+                        fontTitle = new Font(fontTitle.Name, fontSizeDefault, fontTitle.Style, GraphicsUnit.Pixel);
+                        graphics.DrawAndMeasureString(title, fontTitle, fgBrush, new PointF(stringWidth, 5));
+                        fontTitle.Dispose();
                     }
 
                     // Background
                     if (!string.IsNullOrWhiteSpace(iconPath) && File.Exists(iconPath))
                     {
-                        var backgroundImagePos = showTitle ? 20 : 5;
+                        var size = showTitle ? 80 : 100;
+                        var backgroundImagePosY = showTitle ? 25 : 0;
+                        var backgroundImagePosX = (width - size) / 2;
                         var backgroundImage = Image.FromFile(iconPath);
-                        graphics.DrawImage(backgroundImage, 27, backgroundImagePos, 90, 90);
+                        graphics.DrawImage(backgroundImage, backgroundImagePosX, backgroundImagePosY, size, size);
                         backgroundImage.Dispose();
                     }
 
                     //temp
-                    var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(data, width, fontCurrency, 20);
-                    fontCurrency = new Font(fontCurrency.Name, fontSizeTemp, fontCurrency.Style, GraphicsUnit.Pixel);
-                    stringWidth = graphics.GetTextCenter(data, width, fontCurrency);
-                    var tempPos = showTitle ? 111 : 105;
-                    graphics.DrawAndMeasureString(data, fontCurrency, fgBrush, new PointF(stringWidth, tempPos));
+                    var fontTemp = new Font("Verdana", 28, FontStyle.Bold, GraphicsUnit.Pixel);
+                    var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(data, width, fontTemp, 20);
+                    fontTemp = new Font(fontTemp.Name, fontSizeTemp, fontTemp.Style, GraphicsUnit.Pixel);
+                    stringWidth = graphics.GetTextCenter(data, width, fontTemp);
+                    var tempPos = showTitle ? 106 : 105;
+                    graphics.DrawAndMeasureString(data, fontTemp, fgBrush, new PointF(stringWidth, tempPos));
 
                     await Connection.SetImageAsync(bmp);
                     graphics.Dispose();
-                    fontDefault.Dispose();
-                    fontCurrency.Dispose();
+                    fontTemp.Dispose();
                 }
             }
             catch (Exception ex)
