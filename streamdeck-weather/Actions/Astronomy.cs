@@ -7,11 +7,10 @@ using Weather.Backend.Models;
 namespace Weather.Actions
 {
     [PluginActionId("com.linariii.astronomy")]
-    public class Astronomy : PluginBase
+    public class Astronomy : ActionBase
     {
         private const int FetchCooldownSec = 300; // 5 min
-        private PluginSettings _settings;
-        private GlobalSettings _globalSettings;
+        private readonly PluginSettings _settings;
 
         private class PluginSettings
         {
@@ -32,11 +31,12 @@ namespace Weather.Actions
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 _settings = PluginSettings.CreateDefaultSettings();
-                _globalSettings = GlobalSettings.CreateDefaultSettings();
             }
             else
             {
+#if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
+#endif
                 _settings = payload.Settings.ToObject<PluginSettings>();
                 if(_settings != null)
                     _settings.LastRefresh = DateTime.MinValue;
@@ -44,15 +44,9 @@ namespace Weather.Actions
             GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
 
-        public override void Dispose()
-        {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"Destructor called");
-        }
+        public override void Dispose() { }
 
-        public override void KeyPressed(KeyPayload payload)
-        {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Key Pressed");
-        }
+        public override void KeyPressed(KeyPayload payload) { }
 
         public override void KeyReleased(KeyPayload payload) { }
 
@@ -64,40 +58,12 @@ namespace Weather.Actions
             await SaveSettings();
         }
 
-        public override async void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
-        {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedGlobalSettings");
-            if (payload.Settings != null && payload.Settings.Count > 0)
-            {
-                Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedGlobalSettings: {payload.Settings}");
-                var settings = payload.Settings.ToObject<GlobalSettings>();
-                if (settings != null && _globalSettings != null)
-                {
-                    var updated = false;
-                    if (settings.ApiKey != _globalSettings.ApiKey)
-                    {
-                        _globalSettings.ApiKey = settings.ApiKey;
-                        updated = true;
-                    }
-
-                    await SaveGlobalSettings(updated);
-                }
-            }
-        }
-
         private async Task SaveSettings()
         {
+#if DEBUG
             Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveSettings: {JObject.FromObject(_settings)}");
+#endif
             await Connection.SetSettingsAsync(JObject.FromObject(_settings));
-        }
-
-        private async Task SaveGlobalSettings(bool triggerDidReceiveGlobalSettings = true)
-        {
-            if (_globalSettings != null)
-            {
-                Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveGlobalSettings: {JObject.FromObject(_globalSettings)}");
-                await Connection.SetGlobalSettingsAsync(JObject.FromObject(_globalSettings), triggerDidReceiveGlobalSettings);
-            }
         }
     }
 }

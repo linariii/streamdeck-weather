@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
 using Newtonsoft.Json;
@@ -48,7 +49,9 @@ namespace Weather.Actions
             }
             else
             {
+#if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
+#endif
                 _settings = payload.Settings.ToObject<PluginSettings>();
                 if (_settings != null)
                     _settings.LastRefresh = DateTime.MinValue;
@@ -66,7 +69,27 @@ namespace Weather.Actions
             if (string.IsNullOrWhiteSpace(_settings.City))
                 return;
 
-            await LoadData();
+            if (_isRunning > 0)
+                return;
+
+            var locked = false;
+            try
+            {
+                try { }
+                finally
+                {
+                    locked = Interlocked.CompareExchange(ref _isRunning, 1, 0) == 0;
+                }
+
+                if (locked)
+                    await LoadData();
+                
+            }
+            finally
+            {
+                if (locked)
+                    Interlocked.Exchange(ref _isRunning, 0);
+            }
         }
 
         private async Task LoadData()
@@ -105,17 +128,21 @@ namespace Weather.Actions
                 ? $"{Math.Round(_settings.Data.Current.TempF, 0)} °F"
                 : $"{Math.Round(_settings.Data.Current.TempC, 0)} °C";
 
-            var iconPath = GetConditonIconPath(_settings.Data);
+            var iconPath = GetConditionIconPath(_settings.Data);
 
             await DrawWeatherKeyImage(showTitle, title, data, iconPath);
         }
 
         public override async void ReceivedSettings(ReceivedSettingsPayload payload)
         {
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedSettings");
+#if DEBUG           
+            Logger.Instance.LogMessage(TracingLevel.INFO, "ReceivedSettings");
+#endif
             if (payload.Settings != null && payload.Settings.Count > 0)
             {
+#if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedSettings: {payload.Settings}");
+#endif
                 if (Tools.AutoPopulateSettings(_settings, payload.Settings) > 0)
                 {
                     _settings.LastRefresh = DateTime.MinValue;
@@ -126,7 +153,9 @@ namespace Weather.Actions
 
         private async Task SaveSettings()
         {
+#if DEBUG
             Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveSettings: {JObject.FromObject(_settings)}");
+#endif
             await Connection.SetSettingsAsync(JObject.FromObject(_settings));
         }
     }

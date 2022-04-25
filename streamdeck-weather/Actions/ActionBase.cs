@@ -12,6 +12,7 @@ namespace Weather.Actions
     public abstract class ActionBase : PluginBase
     {
         private protected readonly GlobalSettings _globalSettings;
+        private protected int _isRunning = 0;
         protected ActionBase(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             _globalSettings = GlobalSettings.CreateDefaultSettings();
@@ -20,10 +21,14 @@ namespace Weather.Actions
 
         public override async void ReceivedGlobalSettings(ReceivedGlobalSettingsPayload payload)
         {
+#if DEBUG
             Logger.Instance.LogMessage(TracingLevel.INFO, "ReceivedGlobalSettings");
+#endif
             if (payload.Settings != null && payload.Settings.Count > 0)
             {
+#if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedGlobalSettings: {payload.Settings}");
+#endif
                 var settings = payload.Settings.ToObject<GlobalSettings>();
                 if (settings != null && _globalSettings != null)
                 {
@@ -43,21 +48,20 @@ namespace Weather.Actions
         {
             if (_globalSettings != null)
             {
+#if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveGlobalSettings: {JObject.FromObject(_globalSettings)}");
+#endif
                 await Connection.SetGlobalSettingsAsync(JObject.FromObject(_globalSettings), triggerDidReceiveGlobalSettings);
             }
         }
 
-        public override void Dispose()
-        {
-            Logger.Instance.LogMessage(TracingLevel.INFO, "Destructor called");
-        }
+        public override void Dispose() { }
 
         public override void KeyPressed(KeyPayload payload) { }
 
         public override void KeyReleased(KeyPayload payload) { }
 
-        private protected string GetConditonIconPath(CurrentWeatherResult data)
+        private protected string GetConditionIconPath(CurrentWeatherResult data)
         {
             if (string.IsNullOrWhiteSpace(data?.Current?.Condition?.Icon))
                 return null;
