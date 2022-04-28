@@ -2,27 +2,27 @@
   "Actions": [
     {
       "Icon": "Images/weather",
-      "Name": "Current weather",
+      "Name": "Weather",
       "States": [
         {
           "Image": "Images/weather-key"
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Displays the current weather of the selected city",
+      "Tooltip": "Displays the weather for one city",
       "UUID": "com.linariii.weather.current",
       "PropertyInspectorPath": "PropertyInspector/Weather/Weather.html"
     },
     {
       "Icon": "Images/weather-multi",
-      "Name": "Multi weather",
+      "Name": "Weather slider",
       "States": [
         {
-          "Image": "Images/weather-key"
+          "Image": "Images/weather-multi-key"
         }
       ],
       "SupportedInMultiActions": false,
-      "Tooltip": "Displays the current weather for multiple cities",
+      "Tooltip": "Displays the weather for multiple cities",
       "UUID": "com.linariii.multi.weather",
       "PropertyInspectorPath": "PropertyInspector/Weather/WeatherMulti.html"
     }
@@ -30,7 +30,7 @@
   "Author": "linariii",
   "Name": "Weatheria",
   "Description": "Displays the weather of the selected city",
-  "Icon": "Images/weather-key",
+  "Icon": "Images/sun",
   "URL": "https://github.com/linariii/streamdeck-weather",
   "Version": "1.0",
   "CodePath": "weather",
