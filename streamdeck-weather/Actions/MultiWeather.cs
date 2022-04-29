@@ -4,86 +4,61 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Weather.Backend;
 using Weather.Backend.Models;
+using Weather.Settings;
 
 namespace Weather.Actions
 {
     [PluginActionId("com.linariii.multi.weather")]
     public class MultiWeather : ActionBase
     {
-        private const int FetchCooldownSec = 300; // 5 min
-        private const int SwipeCooldownSec = 30;
-        private readonly PluginSettings _settings;
-        private int _swipeIndex = 0;
-
-        private class PluginSettings
-        {
-            [JsonProperty("cities")]
-            public string Cities { get; set; }
-
-            [JsonProperty("data")]
-            public List<CurrentWeatherResult> Data { get; set; }
-
-            [JsonProperty(PropertyName = "lastRefresh")]
-            public DateTime LastRefresh { get; set; }
-
-            [JsonProperty(PropertyName = "lastSwipe")]
-            public DateTime LastSwipe { get; set; }
-
-            [JsonProperty("unit")]
-            public string Unit { get; set; }
-
-            public static PluginSettings CreateDefaultSettings()
-            {
-                return new PluginSettings
-                {
-                    LastRefresh = DateTime.MinValue,
-                    LastSwipe = DateTime.MinValue
-                };
-            }
-        }
-
         public MultiWeather(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
-                _settings = PluginSettings.CreateDefaultSettings();
+                Settings = MultiWeatherPluginSettings.CreateDefaultSettings();
             }
             else
             {
 #if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
 #endif
-                _settings = payload.Settings.ToObject<PluginSettings>();
-                if (_settings != null)
+                Settings = payload.Settings.ToObject<MultiWeatherPluginSettings>();
+                if (Settings != null)
                 {
-                    _settings.LastRefresh = DateTime.MinValue;
-                    _settings.LastSwipe = DateTime.MinValue;
+                    Settings.LastSwipe = DateTime.MinValue;
                 }
             }
             GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
 
-        public override void Dispose() { }
+        protected MultiWeatherPluginSettings Settings
+        {
+            get
+            {
+                var settings = BaseSettings as MultiWeatherPluginSettings;
+                if (settings == null)
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, "Cannot convert PluginSettingsBase to PluginSettings");
+                return settings;
+            }
+            set => BaseSettings = value;
+        }
 
         public override async void KeyPressed(KeyPayload payload)
         {
-            if (_globalSettings == null || _settings == null)
+            if (GlobalSettings == null || Settings == null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(_globalSettings.ApiKey))
+            if (string.IsNullOrWhiteSpace(GlobalSettings.ApiKey))
                 return;
 
-            if (string.IsNullOrWhiteSpace(_settings.Cities))
+            if (string.IsNullOrWhiteSpace(Settings.Cities))
                 return;
 
-            if (_settings.Data == null || !_settings.Data.Any())
+            if (Settings.Data == null || !Settings.Data.Any())
                 return;
 
-            if (_isRunning > 0)
+            if (IsRunning > 0)
                 return;
 
             var locked = false;
@@ -92,7 +67,7 @@ namespace Weather.Actions
                 try { }
                 finally
                 {
-                    locked = Interlocked.CompareExchange(ref _isRunning, 1, 0) == 0;
+                    locked = Interlocked.CompareExchange(ref IsRunning, 1, 0) == 0;
                 }
 
                 if (locked)
@@ -103,22 +78,22 @@ namespace Weather.Actions
             finally
             {
                 if (locked)
-                    Interlocked.Exchange(ref _isRunning, 0);
+                    Interlocked.Exchange(ref IsRunning, 0);
             }
         }
 
         public override async void OnTick()
         {
-            if (_globalSettings == null || _settings == null)
+            if (GlobalSettings == null || Settings == null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(_globalSettings.ApiKey))
+            if (string.IsNullOrWhiteSpace(GlobalSettings.ApiKey))
                 return;
 
-            if (string.IsNullOrWhiteSpace(_settings.Cities))
+            if (string.IsNullOrWhiteSpace(Settings.Cities))
                 return;
 
-            if (_isRunning > 0)
+            if (IsRunning > 0)
                 return;
 
             var locked = false;
@@ -127,13 +102,13 @@ namespace Weather.Actions
                 try { }
                 finally
                 {
-                    locked = Interlocked.CompareExchange(ref _isRunning, 1, 0) == 0;
+                    locked = Interlocked.CompareExchange(ref IsRunning, 1, 0) == 0;
                 }
 
                 if (locked)
                 {
                     await ShouldLoadData();
-                    if (_settings.Data != null && _settings.Data.Any())
+                    if (Settings.Data != null && Settings.Data.Any())
                     {
                         await ShouldDrawNext();
                     }
@@ -143,13 +118,13 @@ namespace Weather.Actions
             finally
             {
                 if (locked)
-                    Interlocked.Exchange(ref _isRunning, 0);
+                    Interlocked.Exchange(ref IsRunning, 0);
             }
         }
 
         private async Task ShouldDrawNext()
         {
-            if ((DateTime.Now - _settings.LastSwipe).TotalSeconds > SwipeCooldownSec)
+            if ((DateTime.Now - Settings.LastSwipe).TotalSeconds > SwipeCooldownSec)
             {
                 await DrawNext();
             }
@@ -157,12 +132,12 @@ namespace Weather.Actions
 
         private async Task DrawNext()
         {
-            var index = _swipeIndex;
+            var index = SwipeIndex;
             UpdateSwipeIndex();
-            if (index >= _settings.Data.Count)
+            if (index >= Settings.Data.Count)
                 return;
 
-            var data = _settings.Data[index];
+            var data = Settings.Data[index];
             if (data == null)
                 return;
 
@@ -170,38 +145,38 @@ namespace Weather.Actions
                 ? data.Location?.Name
                 : "";
 
-            var tempStr = !string.IsNullOrWhiteSpace(_settings.Unit) && _settings.Unit == "f"
+            var tempStr = !string.IsNullOrWhiteSpace(Settings.Unit) && Settings.Unit == "f"
                 ? $"{Math.Round(data.Current.TempF, 0)} °F"
                 : $"{Math.Round(data.Current.TempC, 0)} °C";
 
             var iconPath = GetConditonIconPath(data);
 
             await DrawWeatherKeyImage(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
-            _settings.LastSwipe = DateTime.Now;
+            Settings.LastSwipe = DateTime.Now;
             await SaveSettings();
         }
 
         private async Task ShouldLoadData()
         {
-            if ((DateTime.Now - _settings.LastRefresh).TotalSeconds > FetchCooldownSec
-                && !string.IsNullOrWhiteSpace(_globalSettings.ApiKey)
-                && !string.IsNullOrWhiteSpace(_settings.Cities))
+            if ((DateTime.Now - BaseSettings.LastRefresh).TotalSeconds > FetchCooldownSec
+                && !string.IsNullOrWhiteSpace(GlobalSettings.ApiKey)
+                && !string.IsNullOrWhiteSpace(Settings.Cities))
             {
                 try
                 {
                     var results = new List<CurrentWeatherResult>();
-                    foreach (var cityName in _settings.Cities.Split(','))
+                    foreach (var cityName in Settings.Cities.Split(','))
                     {
-                        var result = await WeatherApiClient.GetCurrentWeatherData(_globalSettings.ApiKey, cityName.Trim());
+                        var result = await LoadWeatherData(cityName.Trim());
                         if (result != null)
                             results.Add(result);
                     }
 
                     if (results.Any())
                     {
-                        _settings.Data = results;
-                        _settings.LastRefresh = DateTime.Now;
-                        _settings.LastSwipe = DateTime.MinValue;
+                        Settings.Data = results;
+                        BaseSettings.LastRefresh = DateTime.Now;
+                        Settings.LastSwipe = DateTime.MinValue;
                         await SaveSettings();
                     }
                 }
@@ -213,19 +188,17 @@ namespace Weather.Actions
             }
         }
 
-        public override void KeyReleased(KeyPayload payload) { }
-
         private void UpdateSwipeIndex()
         {
-            if (string.IsNullOrWhiteSpace(_settings?.Cities))
+            if (string.IsNullOrWhiteSpace(Settings?.Cities))
                 return;
 
-            if (_settings.Data.Count == 0)
+            if (Settings.Data.Count == 0)
                 return;
 
-            Interlocked.Increment(ref _swipeIndex);
-            if (_swipeIndex >= _settings.Data.Count)
-                Interlocked.Exchange(ref _swipeIndex, 0);
+            Interlocked.Increment(ref SwipeIndex);
+            if (SwipeIndex >= Settings.Data.Count)
+                Interlocked.Exchange(ref SwipeIndex, 0);
         }
 
         public override async void ReceivedSettings(ReceivedSettingsPayload payload)
@@ -238,21 +211,13 @@ namespace Weather.Actions
 #if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedSettings: {payload.Settings}");
 #endif
-                if (Tools.AutoPopulateSettings(_settings, payload.Settings) > 0)
+                if (Tools.AutoPopulateSettings(BaseSettings, payload.Settings) > 0)
                 {
-                    _settings.LastRefresh = DateTime.MinValue;
-                    _settings.LastSwipe = DateTime.Now;
+                    Settings.LastRefresh = DateTime.MinValue;
+                    Settings.LastSwipe = DateTime.Now;
                     await SaveSettings();
                 }
             }
-        }
-
-        private async Task SaveSettings()
-        {
-#if DEBUG
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveSettings: {JObject.FromObject(_settings)}");
-#endif
-            await Connection.SetSettingsAsync(JObject.FromObject(_settings));
         }
     }
 }

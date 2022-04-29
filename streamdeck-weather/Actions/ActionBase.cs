@@ -5,17 +5,24 @@ using System.Reflection;
 using System.Threading.Tasks;
 using BarRaider.SdTools;
 using Newtonsoft.Json.Linq;
+using Weather.Backend;
 using Weather.Backend.Models;
+using Weather.Settings;
 
 namespace Weather.Actions
 {
     public abstract class ActionBase : PluginBase
     {
-        private protected readonly GlobalSettings _globalSettings;
-        private protected int _isRunning = 0;
+        private protected const int FetchCooldownSec = 900; // 15 min
+        private protected readonly GlobalSettings GlobalSettings;
+        private protected int IsRunning = 0;
+        private protected PluginSettingsBase BaseSettings;
+        private protected const int SwipeCooldownSec = 30;
+        private protected int SwipeIndex = 0;
+
         protected ActionBase(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
-            _globalSettings = GlobalSettings.CreateDefaultSettings();
+            GlobalSettings = GlobalSettings.CreateDefaultSettings();
             GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
 
@@ -30,12 +37,12 @@ namespace Weather.Actions
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedGlobalSettings: {payload.Settings}");
 #endif
                 var settings = payload.Settings.ToObject<GlobalSettings>();
-                if (settings != null && _globalSettings != null)
+                if (settings != null && GlobalSettings != null)
                 {
                     var updated = false;
-                    if (settings.ApiKey != _globalSettings.ApiKey)
+                    if (settings.ApiKey != GlobalSettings.ApiKey)
                     {
-                        _globalSettings.ApiKey = settings.ApiKey;
+                        GlobalSettings.ApiKey = settings.ApiKey;
                         updated = true;
                     }
 
@@ -46,13 +53,21 @@ namespace Weather.Actions
 
         private async Task SaveGlobalSettings(bool triggerDidReceiveGlobalSettings = true)
         {
-            if (_globalSettings != null)
+            if (GlobalSettings != null)
             {
 #if DEBUG
-                Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveGlobalSettings: {JObject.FromObject(_globalSettings)}");
+                Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveGlobalSettings: {JObject.FromObject(GlobalSettings)}");
 #endif
-                await Connection.SetGlobalSettingsAsync(JObject.FromObject(_globalSettings), triggerDidReceiveGlobalSettings);
+                await Connection.SetGlobalSettingsAsync(JObject.FromObject(GlobalSettings), triggerDidReceiveGlobalSettings);
             }
+        }
+
+        private protected async Task SaveSettings()
+        {
+#if DEBUG
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveSettings: {JObject.FromObject(BaseSettings)}");
+#endif
+            await Connection.SetSettingsAsync(JObject.FromObject(BaseSettings));
         }
 
         public override void Dispose() { }
@@ -90,7 +105,6 @@ namespace Weather.Actions
             {
                 using (var bmp = Tools.GenerateGenericKeyImage(out Graphics graphics))
                 {
-                    var height = bmp.Height;
                     var width = bmp.Width;
 
                     var fgBrush = new SolidBrush(Color.White);
@@ -135,6 +149,35 @@ namespace Weather.Actions
             {
                 Logger.Instance.LogMessage(TracingLevel.ERROR, $"{GetType()} Error drawing data {ex}");
             }
+        }
+
+        private protected async Task<CurrentWeatherResult> ShouldLoadWeatherData(string city)
+        {
+            if ((DateTime.Now - BaseSettings.LastRefresh).TotalSeconds > FetchCooldownSec
+                && !string.IsNullOrWhiteSpace(GlobalSettings.ApiKey)
+                && !string.IsNullOrWhiteSpace(city))
+            {
+                return await LoadWeatherData(city);
+            }
+            return null;
+        }
+
+        private protected async Task<CurrentWeatherResult> LoadWeatherData(string city)
+        {
+            if (!string.IsNullOrWhiteSpace(GlobalSettings.ApiKey) && !string.IsNullOrWhiteSpace(city))
+            {
+                try
+                {
+                    return await WeatherApiClient.GetCurrentWeatherData(GlobalSettings.ApiKey, city);
+
+                }
+                catch (Exception ex)
+                {
+                    await Connection.ShowAlert();
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"Error loading data: {ex}");
+                }
+            }
+            return null;
         }
     }
 }

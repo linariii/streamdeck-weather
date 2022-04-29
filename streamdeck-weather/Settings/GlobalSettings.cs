@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Weather.Actions
+namespace Weather.Settings
 {
     public class GlobalSettings
     {
