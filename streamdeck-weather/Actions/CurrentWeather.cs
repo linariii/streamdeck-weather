@@ -61,14 +61,15 @@ namespace Weather.Actions
 
                 if (locked)
                 {
-                    var data = await ShouldLoadWeatherData(Settings.City);
-                    if (data != null)
+                    if (!string.IsNullOrWhiteSpace(GlobalSettings.ApiKey) && !string.IsNullOrWhiteSpace(Settings.City))
                     {
-                        Settings.Data = data;
+                        await LoadData();
+                    }
+
+                    if (!IsInitialized && Settings.Data != null)
+                    {
                         await DrawKeyImage();
                     }
-                    Settings.LastRefresh = DateTime.Now;
-                    await SaveSettings();
                 }
             }
             finally
@@ -78,8 +79,28 @@ namespace Weather.Actions
             }
         }
 
+        private async Task LoadData()
+        {
+            if ((DateTime.Now - Settings.LastRefresh).TotalSeconds > FetchCooldownSec)
+            {
+                var data = await LoadWeatherData(Settings.City);
+                if (data != null)
+                {
+                    Settings.Data = data;
+                    await DrawKeyImage();
+                }
+
+                Settings.LastRefresh = DateTime.Now;
+                await SaveSettings();
+            }
+        }
+
         private async Task DrawKeyImage()
         {
+            if(Settings.Data == null)
+                return;
+
+            IsInitialized = true;
             var showTitle = !string.IsNullOrWhiteSpace(Settings.DisplayName) && Settings.DisplayName == "1";
             var title = !string.IsNullOrWhiteSpace(Settings.Data.Location?.Name)
                 ? Settings.Data.Location?.Name

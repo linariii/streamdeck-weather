@@ -19,6 +19,7 @@ namespace Weather.Actions
         private protected PluginSettingsBase BaseSettings;
         private protected const int SwipeCooldownSec = 30;
         private protected int SwipeIndex = 0;
+        private protected bool IsInitialized = false;
 
         protected ActionBase(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
@@ -124,8 +125,8 @@ namespace Weather.Actions
                     // Background
                     if (!string.IsNullOrWhiteSpace(iconPath) && File.Exists(iconPath))
                     {
-                        var size = showTitle ? 80 : 100;
-                        var backgroundImagePosY = showTitle ? 25 : 0;
+                        var size = showTitle ? 60 : 85;
+                        var backgroundImagePosY = showTitle ? 37 : 5;
                         var backgroundImagePosX = (width - size) / 2;
                         var backgroundImage = Image.FromFile(iconPath);
                         graphics.DrawImage(backgroundImage, backgroundImagePosX, backgroundImagePosY, size, size);
@@ -151,7 +152,7 @@ namespace Weather.Actions
             }
         }
 
-        private protected async Task<CurrentWeatherResult> ShouldLoadWeatherData(string city)
+        private protected virtual async Task<CurrentWeatherResult> ShouldLoadWeatherData(string city)
         {
             if ((DateTime.Now - BaseSettings.LastRefresh).TotalSeconds > FetchCooldownSec
                 && !string.IsNullOrWhiteSpace(GlobalSettings.ApiKey)

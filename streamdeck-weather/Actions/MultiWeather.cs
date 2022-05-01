@@ -113,7 +113,6 @@ namespace Weather.Actions
                         await ShouldDrawNext();
                     }
                 }
-
             }
             finally
             {
@@ -124,7 +123,11 @@ namespace Weather.Actions
 
         private async Task ShouldDrawNext()
         {
-            if ((DateTime.Now - Settings.LastSwipe).TotalSeconds > SwipeCooldownSec)
+            if (!IsInitialized)
+            {
+                await DrawNext();
+            }
+            else if ((DateTime.Now - Settings.LastSwipe).TotalSeconds > SwipeCooldownSec)
             {
                 await DrawNext();
             }
@@ -132,6 +135,10 @@ namespace Weather.Actions
 
         private async Task DrawNext()
         {
+            if (Settings.Data == null || !Settings.Data.Any())
+                return;
+
+            IsInitialized = true;
             var index = SwipeIndex;
             UpdateSwipeIndex();
             if (index >= Settings.Data.Count)
@@ -158,7 +165,7 @@ namespace Weather.Actions
 
         private async Task ShouldLoadData()
         {
-            if ((DateTime.Now - BaseSettings.LastRefresh).TotalSeconds > FetchCooldownSec
+            if ((DateTime.Now - Settings.LastRefresh).TotalSeconds > FetchCooldownSec
                 && !string.IsNullOrWhiteSpace(GlobalSettings.ApiKey)
                 && !string.IsNullOrWhiteSpace(Settings.Cities))
             {
@@ -175,7 +182,7 @@ namespace Weather.Actions
                     if (results.Any())
                     {
                         Settings.Data = results;
-                        BaseSettings.LastRefresh = DateTime.Now;
+                        Settings.LastRefresh = DateTime.Now;
                         Settings.LastSwipe = DateTime.MinValue;
                         await SaveSettings();
                     }
@@ -193,7 +200,7 @@ namespace Weather.Actions
             if (string.IsNullOrWhiteSpace(Settings?.Cities))
                 return;
 
-            if (Settings.Data.Count == 0)
+            if (Settings.Data == null || !Settings.Data.Any())
                 return;
 
             Interlocked.Increment(ref SwipeIndex);

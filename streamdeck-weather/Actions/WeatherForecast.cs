@@ -57,13 +57,5 @@ namespace Weather.Actions
             Tools.AutoPopulateSettings(_settings, payload.Settings);
             await SaveSettings();
         }
-
-        private async Task SaveSettings()
-        {
-#if DEBUG
-            Logger.Instance.LogMessage(TracingLevel.INFO, $"SaveSettings: {JObject.FromObject(_settings)}");
-#endif
-            await Connection.SetSettingsAsync(JObject.FromObject(_settings));
-        }
     }
 }
