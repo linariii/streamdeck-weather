@@ -17,7 +17,7 @@ namespace Weather.Actions
         private protected readonly GlobalSettings GlobalSettings;
         private protected int IsRunning = 0;
         private protected PluginSettingsBase BaseSettings;
-        private protected const int SwipeCooldownSec = 30;
+        private protected const int SwipeCooldownSec = 15;
         private protected int SwipeIndex = 0;
         private protected bool IsInitialized = false;
 
@@ -91,10 +91,10 @@ namespace Weather.Actions
             var index = data.Current.Condition.Icon.IndexOf("/weather/", StringComparison.Ordinal);
             var iconSubPath = data.Current.Condition.Icon.Substring(index).Replace("/", "\\");
 
-            return $"{currentPath}{Path.DirectorySeparatorChar}Images{iconSubPath}";
+            return $"{currentPath}\\Images{iconSubPath}";
         }
 
-        private protected async Task DrawWeatherKeyImage(bool showTitle, string title, string data, string iconPath)
+        private protected async Task DrawKeyImageWithIcon(bool showTitle, string title, string data, string iconPath)
         {
             if (string.IsNullOrWhiteSpace(data) || string.IsNullOrWhiteSpace(iconPath))
                 return;

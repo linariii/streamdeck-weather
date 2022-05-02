@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>Weather details settings</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <script src="common.js"></script>
+    <script src="weather.js"></script>
+</head>
+<body>
+    <div class="sdpi-wrapper">
+        <div class="sdpi-item">
+            <details class="message info">
+                <summary>
+                    Please do not set a title or an image for this plugin
+                </summary>
+            </details>
+        </div>
+        <div class="sdpi-item" id="dvApiToken">
+            <div class="sdpi-item-label">API Key</div>
+            <input class="sdpi-item-value sdPropertyGlobal" value="" id="apiKey" oninput="setGlobalSettingsWithTimeout()">
+        </div>
+        <details class="message">
+            <summary>Need an API key? <span class="linkspan" onclick="openWebsite('https://www.weatherapi.com/')">Click here</span> </summary>
+        </details>
+        <div id="dvAllSettings" style="display:none;">
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">City</div>
+                <input class="sdpi-item-value sdProperty" value="" id="city" oninput="setSettingsWithTimeout()">
+            </div>
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">Display city name</div>
+                <select class="sdpi-item-value select sdProperty" id="displayName" onchange="setSettings()">
+                    <option value="0">Hide</option>
+                    <option value="1" selected>Show</option>
+                </select>
+            </div>
+            <div class="sdpi-item">
+                <div class="sdpi-item-label">Unit</div>
+                <select class="sdpi-item-value select sdProperty" id="unit" onchange="setSettings()">
+                    <option value="c" selected>Celsius °C</option>
+                    <option value="f">Fahrenheit °F</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

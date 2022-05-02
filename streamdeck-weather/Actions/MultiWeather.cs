@@ -158,7 +158,7 @@ namespace Weather.Actions
 
             var iconPath = GetConditonIconPath(data);
 
-            await DrawWeatherKeyImage(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
+            await DrawKeyImageWithIcon(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
             Settings.LastSwipe = DateTime.Now;
             await SaveSettings();
         }
@@ -183,7 +183,6 @@ namespace Weather.Actions
                     {
                         Settings.Data = results;
                         Settings.LastRefresh = DateTime.Now;
-                        Settings.LastSwipe = DateTime.MinValue;
                         await SaveSettings();
                     }
                 }

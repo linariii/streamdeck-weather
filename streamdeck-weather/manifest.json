@@ -25,6 +25,45 @@
       "Tooltip": "Displays the weather for multiple cities",
       "UUID": "com.linariii.multi.weather",
       "PropertyInspectorPath": "PropertyInspector/Weather/WeatherMulti.html"
+    },
+    {
+      "Icon": "Images/astronomy",
+      "Name": "Astronomy",
+      "States": [
+        {
+          "Image": "Images/astronomy-key"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Displays astronomy information",
+      "UUID": "com.linariii.astronomy",
+      "PropertyInspectorPath": "PropertyInspector/Weather/Astronomy.html"
+    },
+    {
+      "Icon": "Images/forecast",
+      "Name": "Weather forecast",
+      "States": [
+        {
+          "Image": "Images/forecast-key"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Displays the weather forecast",
+      "UUID": "com.linariii.weather.forecast",
+      "PropertyInspectorPath": "PropertyInspector/Weather/WeatherForecast.html"
+    },
+    {
+      "Icon": "Images/details",
+      "Name": "Weather details",
+      "States": [
+        {
+          "Image": "Images/details-key"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "Displays detailed weather information",
+      "UUID": "com.linariii.weather.details",
+      "PropertyInspectorPath": "PropertyInspector/Weather/WeatherDetails.html"
     }
   ],
   "Author": "linariii",

@@ -4,32 +4,32 @@ using Weather.Settings;
 
 namespace Weather.Actions
 {
-    [PluginActionId("com.linariii.weather.forecast")]
-    public class WeatherForecast : ActionBase
+    [PluginActionId("com.linariii.weather.details")]
+    public class WeatherDetails : ActionBase
     {
-        public WeatherForecast(SDConnection connection, InitialPayload payload) : base(connection, payload)
+        public WeatherDetails(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
-                Settings = WeatherForecastPluginSettings.CreateDefaultSettings();
+                Settings = WeatherDetailsPluginSettings.CreateDefaultSettings();
             }
             else
             {
 #if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
 #endif
-                Settings = payload.Settings.ToObject<WeatherForecastPluginSettings>();
+                Settings = payload.Settings.ToObject<WeatherDetailsPluginSettings>();
                 if (Settings != null)
                     Settings.LastSwipe = DateTime.Now;
             }
             GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
 
-        protected WeatherForecastPluginSettings Settings
+        protected WeatherDetailsPluginSettings Settings
         {
             get
             {
-                var settings = BaseSettings as WeatherForecastPluginSettings;
+                var settings = BaseSettings as WeatherDetailsPluginSettings;
                 if (settings == null)
                     Logger.Instance.LogMessage(TracingLevel.ERROR, "Cannot convert PluginSettingsBase to PluginSettings");
                 return settings;
@@ -37,10 +37,15 @@ namespace Weather.Actions
             set => BaseSettings = value;
         }
 
-        public override void KeyPressed(KeyPayload payload) { }
+        public override async void KeyPressed(KeyPayload payload)
+        {
 
+        }
 
-        public override void OnTick() { }
+        public override async void OnTick()
+        {
+           
+        }
 
         public override async void ReceivedSettings(ReceivedSettingsPayload payload)
         {

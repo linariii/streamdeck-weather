@@ -112,7 +112,7 @@ namespace Weather.Actions
 
             var iconPath = GetConditonIconPath(Settings.Data);
 
-            await DrawWeatherKeyImage(showTitle, title, data, iconPath);
+            await DrawKeyImageWithIcon(showTitle, title, data, iconPath);
         }
 
         public override async void ReceivedSettings(ReceivedSettingsPayload payload)
