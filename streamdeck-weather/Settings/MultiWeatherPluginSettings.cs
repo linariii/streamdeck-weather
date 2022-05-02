@@ -24,7 +24,7 @@ namespace Weather.Settings
             return new MultiWeatherPluginSettings
             {
                 LastRefresh = DateTime.MinValue,
-                LastSwipe = DateTime.MinValue
+                LastSwipe = DateTime.Now
             };
         }
     }

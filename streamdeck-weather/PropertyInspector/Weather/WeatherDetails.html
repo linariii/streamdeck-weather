@@ -32,17 +32,17 @@
                 <input class="sdpi-item-value sdProperty" value="" id="city" oninput="setSettingsWithTimeout()">
             </div>
             <div class="sdpi-item">
-                <div class="sdpi-item-label">Display city name</div>
-                <select class="sdpi-item-value select sdProperty" id="displayName" onchange="setSettings()">
-                    <option value="0">Hide</option>
-                    <option value="1" selected>Show</option>
+                <div class="sdpi-item-label">Temperature Unit</div>
+                <select class="sdpi-item-value select sdProperty" id="temperature" onchange="setSettings()">
+                    <option value="c" selected>Celsius °C</option>
+                    <option value="f">Fahrenheit °F</option>
                 </select>
             </div>
             <div class="sdpi-item">
-                <div class="sdpi-item-label">Unit</div>
-                <select class="sdpi-item-value select sdProperty" id="unit" onchange="setSettings()">
-                    <option value="c" selected>Celsius °C</option>
-                    <option value="f">Fahrenheit °F</option>
+                <div class="sdpi-item-label">Speed Unit</div>
+                <select class="sdpi-item-value select sdProperty" id="speed" onchange="setSettings()">
+                    <option value="kmh" selected>Kilometers per hour - km/h</option>
+                    <option value="mph">Miles per hour - mph</option>
                 </select>
             </div>
         </div>

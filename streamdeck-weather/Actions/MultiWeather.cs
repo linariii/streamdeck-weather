@@ -163,6 +163,32 @@ namespace Weather.Actions
             await SaveSettings();
         }
 
+        private async Task Redraw()
+        {
+            if (Settings.Data == null || !Settings.Data.Any())
+                return;
+
+            var index = SwipeIndex - 1;
+            if (index < 0 || index >= Settings.Data.Count)
+                index = 0;
+
+            var data = Settings.Data[index];
+            if (data == null)
+                return;
+
+            var title = !string.IsNullOrWhiteSpace(data.Location?.Name)
+                ? data.Location?.Name
+                : "";
+
+            var tempStr = !string.IsNullOrWhiteSpace(Settings.Unit) && Settings.Unit == "f"
+                ? $"{Math.Round(data.Current.TempF, 0)} °F"
+                : $"{Math.Round(data.Current.TempC, 0)} °C";
+
+            var iconPath = GetConditonIconPath(data);
+
+            await DrawKeyImageWithIcon(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
+        }
+
         private async Task ShouldLoadData()
         {
             if ((DateTime.Now - Settings.LastRefresh).TotalSeconds > FetchCooldownSec
@@ -217,11 +243,12 @@ namespace Weather.Actions
 #if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedSettings: {payload.Settings}");
 #endif
-                if (Tools.AutoPopulateSettings(BaseSettings, payload.Settings) > 0)
+                if (Tools.AutoPopulateSettings(Settings, payload.Settings) > 0)
                 {
                     Settings.LastRefresh = DateTime.MinValue;
                     Settings.LastSwipe = DateTime.Now;
                     await SaveSettings();
+                    await Redraw();
                 }
             }
         }

@@ -52,7 +52,7 @@ namespace Weather.Actions
 #if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedSettings: {payload.Settings}");
 #endif
-                if (Tools.AutoPopulateSettings(BaseSettings, payload.Settings) > 0)
+                if (Tools.AutoPopulateSettings(Settings, payload.Settings) > 0)
                 {
                     Settings.LastRefresh = DateTime.MinValue;
                     Settings.LastSwipe = DateTime.Now;

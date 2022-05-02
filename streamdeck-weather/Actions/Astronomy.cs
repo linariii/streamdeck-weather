@@ -153,12 +153,33 @@ namespace Weather.Actions
             if (string.IsNullOrWhiteSpace(iconName))
                 return;
 
-            Logger.Instance.LogMessage(TracingLevel.INFO, iconName);
             var iconPath = GetAstronomyIconPath(iconName);
-            Logger.Instance.LogMessage(TracingLevel.INFO, iconPath);
             await DrawKeyImageWithIcon(true, Settings.City, data, iconPath);
             Settings.LastSwipe = DateTime.Now;
             await SaveSettings();
+        }
+
+        private async Task Redraw()
+        {
+            if (Settings.Data == null)
+                return;
+
+            var index = SwipeIndex - 1;
+            if (index < 0)
+                index = 0;
+
+            var astronomy = (Enums.Astronomy)index;
+            var data = GetData(astronomy);
+
+            if (string.IsNullOrWhiteSpace(data))
+                return;
+
+            var iconName = GetIconPath(astronomy);
+            if (string.IsNullOrWhiteSpace(iconName))
+                return;
+
+            var iconPath = GetAstronomyIconPath(iconName);
+            await DrawKeyImageWithIcon(true, Settings.City, data, iconPath);
         }
 
         private string GetData(Enums.Astronomy astronomy)
@@ -277,11 +298,12 @@ namespace Weather.Actions
 #if DEBUG
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"ReceivedSettings: {payload.Settings}");
 #endif
-                if (Tools.AutoPopulateSettings(BaseSettings, payload.Settings) > 0)
+                if (Tools.AutoPopulateSettings(Settings, payload.Settings) > 0)
                 {
                     Settings.LastRefresh = DateTime.MinValue;
                     Settings.LastSwipe = DateTime.Now;
                     await SaveSettings();
+                    await Redraw();
                 }
             }
         }
