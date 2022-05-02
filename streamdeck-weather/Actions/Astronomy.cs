@@ -12,7 +12,7 @@ namespace Weather.Actions
     [PluginActionId("com.linariii.astronomy")]
     public class Astronomy : ActionBase
     {
-        private const int NumberOfSlides = 5;
+        private readonly int _numberOfSlides = Enum.GetNames(typeof(Enums.Astronomy)).Length;
         public Astronomy(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
@@ -140,7 +140,7 @@ namespace Weather.Actions
             IsInitialized = true;
             var index = SwipeIndex;
             UpdateSwipeIndex();
-            if (index >= NumberOfSlides)
+            if (index >= _numberOfSlides)
                 return;
 
             var astronomy = (Enums.Astronomy)index;
@@ -284,7 +284,7 @@ namespace Weather.Actions
                 return;
 
             Interlocked.Increment(ref SwipeIndex);
-            if (SwipeIndex >= NumberOfSlides)
+            if (SwipeIndex >= _numberOfSlides)
                 Interlocked.Exchange(ref SwipeIndex, 0);
         }
 
