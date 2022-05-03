@@ -7,6 +7,7 @@ namespace Weather.Actions
     [PluginActionId("com.linariii.weather.forecast")]
     public class WeatherForecast : ActionBase
     {
+        private DateTime _lastSwipe = DateTime.Now;
         public WeatherForecast(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
@@ -19,8 +20,6 @@ namespace Weather.Actions
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
 #endif
                 Settings = payload.Settings.ToObject<WeatherForecastPluginSettings>();
-                if (Settings != null)
-                    Settings.LastSwipe = DateTime.Now;
             }
             GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
@@ -55,7 +54,7 @@ namespace Weather.Actions
                 if (Tools.AutoPopulateSettings(Settings, payload.Settings) > 0)
                 {
                     Settings.LastRefresh = DateTime.MinValue;
-                    Settings.LastSwipe = DateTime.Now;
+                    _lastSwipe = DateTime.Now;
                     await SaveSettings();
                 }
             }

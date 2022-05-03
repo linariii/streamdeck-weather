@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Weather.Backend.Models;
 
@@ -10,17 +11,13 @@ namespace Weather.Settings
         public string City { get; set; }
 
         [JsonProperty("data")]
-        public ForecastResult Data { get; set; }
-
-        [JsonProperty(PropertyName = "lastSwipe")]
-        public DateTime LastSwipe { get; set; }
+        public List<ForecastDay> Data { get; set; }
 
         public static WeatherForecastPluginSettings CreateDefaultSettings()
         {
             return new WeatherForecastPluginSettings
             {
-                LastRefresh = DateTime.MinValue,
-                LastSwipe = DateTime.Now
+                LastRefresh = DateTime.MinValue
             };
         }
     }

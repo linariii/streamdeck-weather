@@ -12,15 +12,11 @@ namespace Weather.Settings
         [JsonProperty("data")]
         public AstronomyResult Data { get; set; }
 
-        [JsonProperty(PropertyName = "lastSwipe")]
-        public DateTime LastSwipe { get; set; }
-
         public static AstronomyPluginSettings CreateDefaultSettings()
         {
             return new AstronomyPluginSettings
             {
-                LastRefresh = DateTime.MinValue,
-                LastSwipe = DateTime.Now
+                LastRefresh = DateTime.MinValue
             };
         }
     }

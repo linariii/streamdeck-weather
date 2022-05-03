@@ -13,6 +13,7 @@ namespace Weather.Actions
     public class Astronomy : ActionBase
     {
         private readonly int _numberOfSlides = Enum.GetNames(typeof(Enums.Astronomy)).Length;
+        private DateTime _lastSwipe = DateTime.Now;
         public Astronomy(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
@@ -25,8 +26,6 @@ namespace Weather.Actions
                 Logger.Instance.LogMessage(TracingLevel.INFO, $"Settings: {payload.Settings}");
 #endif
                 Settings = payload.Settings.ToObject<AstronomyPluginSettings>();
-                if (Settings != null)
-                    Settings.LastSwipe = DateTime.Now;
             }
             GlobalSettingsManager.Instance.RequestGlobalSettings();
         }
@@ -126,7 +125,7 @@ namespace Weather.Actions
             {
                 await DrawNext();
             }
-            else if ((DateTime.Now - Settings.LastSwipe).TotalSeconds > SwipeCooldownSec)
+            else if ((DateTime.Now - _lastSwipe).TotalSeconds > SwipeCooldownSec)
             {
                 await DrawNext();
             }
@@ -155,8 +154,7 @@ namespace Weather.Actions
 
             var iconPath = GetAstronomyIconPath(iconName);
             await DrawKeyImageWithIcon(true, Settings.City, data, iconPath);
-            Settings.LastSwipe = DateTime.Now;
-            await SaveSettings();
+            _lastSwipe = DateTime.Now;
         }
 
         private async Task Redraw()
@@ -312,7 +310,7 @@ namespace Weather.Actions
                 if (Tools.AutoPopulateSettings(Settings, payload.Settings) > 0)
                 {
                     Settings.LastRefresh = DateTime.MinValue;
-                    Settings.LastSwipe = DateTime.Now;
+                    _lastSwipe = DateTime.Now;
                     await SaveSettings();
                     await Redraw();
                 }

@@ -12,9 +12,6 @@ namespace Weather.Settings
         [JsonProperty("data")]
         public CurrentWeatherResult Data { get; set; }
 
-        [JsonProperty(PropertyName = "lastSwipe")]
-        public DateTime LastSwipe { get; set; }
-
         [JsonProperty("temperature")]
         public string TemperatureUnit { get; set; }
 
@@ -25,8 +22,7 @@ namespace Weather.Settings
         {
             return new WeatherDetailsPluginSettings
             {
-                LastRefresh = DateTime.MinValue,
-                LastSwipe = DateTime.Now
+                LastRefresh = DateTime.MinValue
             };
         }
     }
