@@ -141,21 +141,7 @@ namespace Weather.Actions
             if (index >= Settings.Data.Count)
                 return;
 
-            var data = Settings.Data[index];
-            if (data == null)
-                return;
-
-            var title = !string.IsNullOrWhiteSpace(data.Location?.Name)
-                ? data.Location?.Name
-                : "";
-
-            var tempStr = !string.IsNullOrWhiteSpace(Settings.Unit) && Settings.Unit == "f"
-                ? $"{Math.Round(data.Current.TempF, 0)} °F"
-                : $"{Math.Round(data.Current.TempC, 0)} °C";
-
-            var iconPath = GetConditonIconPath(data);
-
-            await DrawKeyImageWithIcon(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
+            await DrawIndex(index);
             _lastSwipe = DateTime.Now;
         }
 
@@ -168,6 +154,14 @@ namespace Weather.Actions
             if (index < 0 || index >= Settings.Data.Count)
                 index = 0;
 
+            await DrawIndex(index);
+        }
+
+        private async Task DrawIndex(int index)
+        {
+            if(Settings.Data == null || !Settings.Data.Any())
+                return;
+
             var data = Settings.Data[index];
             if (data == null)
                 return;
@@ -180,7 +174,7 @@ namespace Weather.Actions
                 ? $"{Math.Round(data.Current.TempF, 0)} °F"
                 : $"{Math.Round(data.Current.TempC, 0)} °C";
 
-            var iconPath = GetConditonIconPath(data);
+            var iconPath = GetConditonIconPath(data.Current.Condition);
 
             await DrawKeyImageWithIcon(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
         }

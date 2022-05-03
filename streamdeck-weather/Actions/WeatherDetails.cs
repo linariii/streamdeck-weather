@@ -144,16 +144,7 @@ namespace Weather.Actions
             if (index >= _numberOfSlides)
                 return;
 
-            var astronomy = (Details)index;
-            var data = GetData(astronomy);
-            if (string.IsNullOrWhiteSpace(data))
-                return;
-
-            var iconPath = GetIconPath(astronomy);
-            if (string.IsNullOrWhiteSpace(iconPath))
-                return;
-
-            await DrawKeyImageWithIcon(true, Settings.City, data, iconPath);
+            await DrawIndex(index);
             _lastSwipe = DateTime.Now;
         }
 
@@ -163,7 +154,11 @@ namespace Weather.Actions
                 return;
 
             var index = GetPreviousSwipeIndex();
+            await DrawIndex(index);
+        }
 
+        private async Task DrawIndex(int index)
+        {
             var astronomy = (Details)index;
             var data = GetData(astronomy);
             if (string.IsNullOrWhiteSpace(data))
@@ -213,7 +208,7 @@ namespace Weather.Actions
 
             switch (details)
             {
-                case Details.Condition: return GetConditonIconPath(Settings.Data);
+                case Details.Condition: return GetConditonIconPath(Settings.Data.Current.Condition);
                 case Details.FeelsLike: return GetDetailsIconPath("feelslike");
                 case Details.Wind: return GetDetailsIconPath(Settings.Data.Current.WindDir.ToLowerInvariant());
                 case Details.Clouds: return GetDetailsIconPath("cloud");

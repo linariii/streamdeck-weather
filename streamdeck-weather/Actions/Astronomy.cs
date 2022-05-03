@@ -142,18 +142,7 @@ namespace Weather.Actions
             if (index >= _numberOfSlides)
                 return;
 
-            var astronomy = (Enums.Astronomy)index;
-            var data = GetData(astronomy);
-
-            if (string.IsNullOrWhiteSpace(data))
-                return;
-
-            var iconName = GetIconPath(astronomy);
-            if (string.IsNullOrWhiteSpace(iconName))
-                return;
-
-            var iconPath = GetAstronomyIconPath(iconName);
-            await DrawKeyImageWithIcon(true, Settings.City, data, iconPath);
+            await DrawIndex(index);
             _lastSwipe = DateTime.Now;
         }
 
@@ -163,7 +152,11 @@ namespace Weather.Actions
                 return;
 
             var index = GetPreviousSwipeIndex();
+            await DrawIndex(index);
+        }
 
+        private async Task DrawIndex(int index)
+        {
             var astronomy = (Enums.Astronomy)index;
             var data = GetData(astronomy);
 

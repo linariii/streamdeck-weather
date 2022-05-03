@@ -13,6 +13,9 @@ namespace Weather.Settings
         [JsonProperty("data")]
         public List<ForecastDay> Data { get; set; }
 
+        [JsonProperty("unit")]
+        public string Unit { get; set; }
+
         public static WeatherForecastPluginSettings CreateDefaultSettings()
         {
             return new WeatherForecastPluginSettings

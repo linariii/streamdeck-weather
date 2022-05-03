@@ -77,9 +77,9 @@ namespace Weather.Actions
 
         public override void KeyReleased(KeyPayload payload) { }
 
-        private protected string GetConditonIconPath(CurrentWeatherResult data)
+        private protected string GetConditonIconPath(Condition condition)
         {
-            if (string.IsNullOrWhiteSpace(data?.Current?.Condition?.Icon))
+            if (string.IsNullOrWhiteSpace(condition?.Icon))
                 return null;
 
             var assemblyLocation = Assembly.GetEntryAssembly()?.Location;
@@ -88,8 +88,8 @@ namespace Weather.Actions
 
             var currentPath = Path.GetDirectoryName(assemblyLocation);
 
-            var index = data.Current.Condition.Icon.IndexOf("/weather/", StringComparison.Ordinal);
-            var iconSubPath = data.Current.Condition.Icon.Substring(index).Replace("/", "\\");
+            var index = condition.Icon.IndexOf("/weather/", StringComparison.Ordinal);
+            var iconSubPath = condition.Icon.Substring(index).Replace("/", "\\");
 
             return $"{currentPath}\\Images{iconSubPath}";
         }

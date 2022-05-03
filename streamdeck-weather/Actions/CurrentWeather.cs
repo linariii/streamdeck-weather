@@ -110,7 +110,7 @@ namespace Weather.Actions
                 ? $"{Math.Round(Settings.Data.Current.TempF, 0)} °F"
                 : $"{Math.Round(Settings.Data.Current.TempC, 0)} °C";
 
-            var iconPath = GetConditonIconPath(Settings.Data);
+            var iconPath = GetConditonIconPath(Settings.Data.Current.Condition);
 
             await DrawKeyImageWithIcon(showTitle, title, data, iconPath);
         }
