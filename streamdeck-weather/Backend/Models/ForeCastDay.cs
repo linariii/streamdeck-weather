@@ -17,7 +17,7 @@ namespace Weather.Backend.Models
         [JsonProperty("astro")]
         public Astro Astro { get; set; }
 
-        [JsonProperty("hour")]
-        public List<Hour> Hour { get; set; }
+        //[JsonProperty("hour")]
+        //public List<Hour> Hour { get; set; }
     }
 }
