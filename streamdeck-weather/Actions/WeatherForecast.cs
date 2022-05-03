@@ -203,7 +203,14 @@ namespace Weather.Actions
 
         private void SetScrollingTitle(ForecastDay data)
         {
-            _scrollingTitle = new StringBuilder($"{Settings.City} - {data.Date}   ");
+            if (DateTime.TryParse(data.Date, out var date))
+            {
+                _scrollingTitle = new StringBuilder($"{Settings.City} - {date:M}   ");
+            }
+            else
+            {
+                _scrollingTitle = new StringBuilder($"{Settings.City} - {data.Date}   ");
+            }
         }
 
         private async Task DrawKeyImage()
