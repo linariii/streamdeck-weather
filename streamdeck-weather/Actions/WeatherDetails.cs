@@ -250,7 +250,6 @@ namespace Weather.Actions
 
             var currentPath = Path.GetDirectoryName(assemblyLocation);
 
-
             return $"{currentPath}\\Images\\details\\{iconName}.png";
         }
 

@@ -256,7 +256,6 @@ namespace Weather.Actions
 
             var currentPath = Path.GetDirectoryName(assemblyLocation);
 
-
             return $"{currentPath}\\Images\\astronomy\\{iconName}";
         }
 

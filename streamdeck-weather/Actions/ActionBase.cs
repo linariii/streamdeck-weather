@@ -71,11 +71,26 @@ namespace Weather.Actions
             await Connection.SetSettingsAsync(JObject.FromObject(BaseSettings));
         }
 
-        public override void Dispose() { }
+        public override void Dispose()
+        {
+#if DEBUG
+            Logger.Instance.LogMessage(TracingLevel.INFO, "Dispose");
+#endif
+        }
 
-        public override void KeyPressed(KeyPayload payload) { }
+        public override void KeyPressed(KeyPayload payload)
+        {
+#if DEBUG
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KeyPressed");
+#endif
+        }
 
-        public override void KeyReleased(KeyPayload payload) { }
+        public override void KeyReleased(KeyPayload payload)
+        {
+#if DEBUG
+            Logger.Instance.LogMessage(TracingLevel.INFO, "KeyReleased");
+#endif
+        }
 
         private protected string GetConditonIconPath(Condition condition)
         {

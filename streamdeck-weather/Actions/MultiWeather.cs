@@ -159,7 +159,7 @@ namespace Weather.Actions
 
         private async Task DrawIndex(int index)
         {
-            if(Settings.Data == null || !Settings.Data.Any())
+            if (Settings.Data == null || !Settings.Data.Any())
                 return;
 
             var data = Settings.Data[index];
