@@ -16,20 +16,20 @@
 	* Supports celsius and fahrenheit (°C and °F)
 	* Requires an WeatherAPI api key
 	* data is refresh every 15 minutes
-	* every 15 seconds the entry is displayed
+	* every 15 seconds the next entry is displayed
 	* button push > display next entry
 * Astronomy
 	* Display astronomy information (sunrise, sunset, moonrise, moonset, moon phase) for a selected city
 	* Requires an WeatherAPI api key
 	* data is refresh every 15 minutes
-	* every 15 seconds the entry is displayed
+	* every 15 seconds the next entry is displayed
 	* button push > display next entry
 * Weather forecast
 	* Displays the weather forecast for a selected city
 	* Supports celsius and fahrenheit (°C and °F)
 	* Requires an WeatherAPI api key
 	* data is refresh every 15 minutes
-	* every 15 seconds the entry is displayed
+	* every 15 seconds the next entry is displayed
 	* button push > display next entry
 * Weather details
 	* displays detailed information (condition, feels like, wind direction, clouds, humidity, uv) for a selected city
@@ -37,7 +37,7 @@
 	* Supports kmh and mph
 	* Requires an WeatherAPI api key
 	* data is refresh every 15 minutes
-	* every 15 seconds the entry is displayed
+	* every 15 seconds the next entry is displayed
 	* button push > display next entry
 
 ## Support
