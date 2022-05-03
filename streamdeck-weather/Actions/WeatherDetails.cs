@@ -164,9 +164,7 @@ namespace Weather.Actions
             if (Settings.Data == null)
                 return;
 
-            var index = SwipeIndex - 1;
-            if (index < 0)
-                index = 0;
+            var index = GetPreviousSwipeIndex();
 
             var astronomy = (Details)index;
             var data = GetData(astronomy);
@@ -178,6 +176,19 @@ namespace Weather.Actions
                 return;
 
             await DrawKeyImageWithIcon(true, Settings.City, data, iconPath);
+        }
+
+        private int GetPreviousSwipeIndex()
+        {
+            var index = SwipeIndex;
+            if (index == 0)
+                return _numberOfSlides - 1;
+
+            index--;
+            if (index < 0)
+                index = 0;
+
+            return index;
         }
 
         private string GetData(Details details)

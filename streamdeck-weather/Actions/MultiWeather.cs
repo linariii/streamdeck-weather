@@ -168,7 +168,7 @@ namespace Weather.Actions
             if (Settings.Data == null || !Settings.Data.Any())
                 return;
 
-            var index = SwipeIndex - 1;
+            var index = GetPreviousSwipeIndex();
             if (index < 0 || index >= Settings.Data.Count)
                 index = 0;
 
@@ -187,6 +187,19 @@ namespace Weather.Actions
             var iconPath = GetConditonIconPath(data);
 
             await DrawKeyImageWithIcon(!string.IsNullOrWhiteSpace(title), title, tempStr, iconPath);
+        }
+
+        private int GetPreviousSwipeIndex()
+        {
+            var index = SwipeIndex;
+            if (index == 0)
+                return Settings.Data.Count - 1;
+
+            index--;
+            if (index < 0)
+                index = 0;
+
+            return index;
         }
 
         private async Task ShouldLoadData()
