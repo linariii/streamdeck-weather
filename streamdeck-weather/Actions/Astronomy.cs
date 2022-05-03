@@ -192,16 +192,16 @@ namespace Weather.Actions
             switch (astronomy)
             {
                 case Enums.Astronomy.Sunrise:
-                    return Settings.Data.Astronomy.Astro.Sunrise;
+                    return TryGetAstroDate(Settings.Data.Astronomy.Astro.Sunrise);
 
                 case Enums.Astronomy.Sunset:
-                    return Settings.Data.Astronomy.Astro.Sunset;
+                    return TryGetAstroDate(Settings.Data.Astronomy.Astro.Sunset);
 
                 case Enums.Astronomy.Moonrise:
-                    return Settings.Data.Astronomy.Astro.Moonrise;
+                    return TryGetAstroDate(Settings.Data.Astronomy.Astro.Moonrise);
 
                 case Enums.Astronomy.Moonset:
-                    return Settings.Data.Astronomy.Astro.Moonset;
+                    return TryGetAstroDate(Settings.Data.Astronomy.Astro.Moonset);
 
                 case Enums.Astronomy.Moonphase:
                     return Settings.Data.Astronomy.Astro.MoonPhase;
@@ -209,6 +209,13 @@ namespace Weather.Actions
                 default:
                     return null;
             }
+        }
+
+        private string TryGetAstroDate(string data)
+        {
+            return DateTime.TryParse(data, out var date)
+                ? $"{date:t}"
+                : data;
         }
 
         private string GetIconPath(Enums.Astronomy astronomy)
