@@ -192,8 +192,8 @@ namespace Weather.Actions
         private void SetTemperatureText(ForecastDay data)
         {
             _temperatureText = !string.IsNullOrWhiteSpace(Settings.Unit) && Settings.Unit == "f"
-                ? $"{Math.Round(data.Day.AvgTempF, 0)} °F"
-                : $"{Math.Round(data.Day.AvgTempC, 0)} °C";
+                ? $"{Math.Round(data.Day.MaxTempF, 0)} °F"
+                : $"{Math.Round(data.Day.MaxTempC, 0)} °C";
         }
 
         private void SetIconPath(ForecastDay data)
@@ -241,7 +241,7 @@ namespace Weather.Actions
 
                     //temp
                     var fontTemp = new Font("Verdana", 28, FontStyle.Bold, GraphicsUnit.Pixel);
-                    var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(_temperatureText, width, fontTemp, 20);
+                    var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(_temperatureText, width, fontTemp, 12);
                     fontTemp = new Font(fontTemp.Name, fontSizeTemp, fontTemp.Style, GraphicsUnit.Pixel);
                     var stringWidth = graphics.GetTextCenter(_temperatureText, width, fontTemp);
                     var tempPos = 106;

@@ -150,7 +150,7 @@ namespace Weather.Actions
 
                     //temp
                     var fontTemp = new Font("Verdana", 28, FontStyle.Bold, GraphicsUnit.Pixel);
-                    var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(data, width, fontTemp, 20);
+                    var fontSizeTemp = graphics.GetFontSizeWhereTextFitsImage(data, width, fontTemp, 12);
                     fontTemp = new Font(fontTemp.Name, fontSizeTemp, fontTemp.Style, GraphicsUnit.Pixel);
                     stringWidth = graphics.GetTextCenter(data, width, fontTemp);
                     var tempPos = showTitle ? 106 : 105;
